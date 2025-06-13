@@ -6,10 +6,10 @@ const app = express();
 app.use(express.json()); // Middleware para interpretar JSON
 
 const url = "https://www.mercadolivre.com.br/";
-const searchFor = "Porsche conversível 2010";
+const searchFor = "Iphone";
 
-const maxPagesToScrape = 48;
-const maxConcurrentTabs = 48;
+const maxPagesToScrape = 12;
+const maxConcurrentTabs = 12;
 
 // Rota para expor a lista de objetos
 app.get('/api/list', listController.index);
@@ -36,7 +36,7 @@ app.listen(3000, async () => {
         let pageNumber = 1;
 
         while (pageNumber <= maxPagesToScrape) {
-            const links = await page.$$eval('.ui-search-item__group > a', els => els.map(link => link.href));
+            const links = await page.$$eval('.poly-component__title', els => els.map(link => link.href));
 
             for (let i = 0; i < links.length; i += maxConcurrentTabs) {
                 const chunk = links.slice(i, i + maxConcurrentTabs);
@@ -96,6 +96,7 @@ app.listen(3000, async () => {
                 break;
             }
         }
+         console.log(listController.list);
         await browser.close();
     } catch (error) {
         console.error('Erro ao coletar dados:', error);
